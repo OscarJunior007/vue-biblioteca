@@ -1,19 +1,26 @@
 <template>
   <v-container>
-    <HelloWorld></HelloWorld>
+    <MenuComponent></MenuComponent>
+    <BusquedaComponent></BusquedaComponent>
+    <TableComponent></TableComponent>
     <AppFooter></AppFooter>
   </v-container>
 </template>
 
 <script>
 import AppFooter from '@/components/AppFooter.vue';
-import HelloWorld from '@/components/HelloWorld.vue';
+import BusquedaComponent from '@/components/BusquedaComponent.vue';
+
+import MenuComponent from '@/components/MenuComponent.vue';
+import TableComponent from '@/components/TableComponent.vue';
 
 export default {
     name:'HomeView',
     components:{
-        HelloWorld,
-        AppFooter   
+        AppFooter,
+        MenuComponent,
+        BusquedaComponent,
+        TableComponent
     },
 }
 </script>
