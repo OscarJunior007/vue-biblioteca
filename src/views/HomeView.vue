@@ -1,8 +1,12 @@
 <template>
   <v-container>
+    <div
+    ></div>
     <MenuComponent></MenuComponent>
     <BusquedaComponent></BusquedaComponent>
-    <TableComponent></TableComponent>
+      <TableComponent
+      :libros="libros"
+      ></TableComponent>
     <AppFooter></AppFooter>
   </v-container>
 </template>
@@ -22,6 +26,47 @@ export default {
         BusquedaComponent,
         TableComponent
     },
+
+    setup(){
+      const libros = [
+    {
+        id: 1,
+        titulo: "El Principito",
+        autor: "Antoine de Saint-Exupéry",
+        categoria: "Ficción",
+        estado: "Disponible"
+    },
+    {
+        id: 2,
+        titulo: "Cien años de soledad",
+        autor: "Gabriel García Márquez",
+        categoria: "Realismo mágico",
+        estado: "Prestado"
+    },
+    {
+        id: 3,
+        titulo: "1984",
+        autor: "George Orwell",
+        categoria: "Distopía",
+        estado: "Disponible"
+    },
+    {
+        id: 4,
+        titulo: "Don Quijote de la Mancha",
+        autor: "Miguel de Cervantes",
+        categoria: "Clásico",
+        estado: "Disponible"
+    },
+    {
+        id: 5,
+        titulo: "Los miserables",
+        autor: "Victor Hugo",
+        categoria: "Drama",
+        estado: "Prestado"
+    }
+];
+      return{libros}
+    }
 }
 </script>
 

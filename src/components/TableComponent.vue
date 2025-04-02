@@ -12,11 +12,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>{{ titulo_libro }}</td>
-            <td>{{ autor_libro }}</td>
-            <td>{{ categoria_libro }}</td>
-            <td>{{ estado_libro }}</td>
+          <tr v-for="libro in libros" :key="libro.id">
+            <td>{{ libro.titulo }}</td>
+            <td>{{ libro.autor }}</td>
+            <td>{{ libro.categoria }}</td>
+            <td>{{ libro.estado }}</td>
 
             <td class="d-flex justify-start">
               <v-btn variant="text" icon color="blue" density="compact"
@@ -41,12 +41,8 @@ import { ref, reactive, onMounted } from "vue";
 
 export default {
   name: "TableComponent",
-  prop: {
-    titulo_libro: String,
-    autor_libro: String,
-    categoria_libro: String,
-    estado: String,
-    acciones: String,
+  props: {
+    libros: Array,
   },
 };
 </script>
