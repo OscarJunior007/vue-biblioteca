@@ -31,10 +31,10 @@ def buscar_user(email):
        
         resultado = db.ejecutar_consulta("SELECT * FROM users WHERE email = %s", (email,))
         
-        datos = [dato for dato in resultado]
+ 
         db.cerrar_conexion()  
 
-        return datos
+        return [dato for dato in resultado]
       
      except Exception as e:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrió un error: {e}")
