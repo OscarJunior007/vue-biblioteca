@@ -22,7 +22,7 @@
               <v-btn variant="text" icon color="blue" density="compact"
                 ><v-icon>mdi-pencil</v-icon></v-btn
               >
-              <v-btn variant="text" icon color="red" density="compact"
+              <v-btn variant="text" icon color="green" density="compact"
                 ><v-icon>mdi-exit-to-app</v-icon></v-btn
               >
               <v-btn variant="text" icon color="red" density="compact"

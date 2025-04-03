@@ -7,7 +7,7 @@ class Libro(BaseModel):
     categoria:str
     author:str
     fecha_publicacion:str
-    estado:str | None = "habilitado"
+    estado:str | None = "disponible"
 
 
 class User(BaseModel):

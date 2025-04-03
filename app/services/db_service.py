@@ -46,7 +46,7 @@ class Database:
 
     
     def cerrar_conexion(self):
-        """Cierra la conexión con la base de datos."""
+     
         if self.cursor:
             self.cursor.close()
         if self.connection:
