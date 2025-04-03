@@ -1,36 +1,41 @@
-import mysql.connector
+from app.services.db_service import Database
 from app.models.schemas import User
-from fastapi import HTTPException
-
-def ActualiozarBD():
-    connection = mysql.connector.connect(user='root', password='12345',
-                                         database='biblioteca_python',
-                                         port='3306')
-    return connection
+from fastapi import HTTPException,status
 
 
-def create_user(datos: User):
-     conexion = ActualiozarBD()
-     cursor = conexion.cursor()
+def create_user(user:User):
+
+
+    db = Database('root','12345','biblioteca_python','3306')
+    
+    try:
+        
+        connection = db.conectar_db()
+
+        if connection:
+            db.ejecutar_consulta("INSERT INTO users (id,name,email,password,profile) VALUES(%s,%s,%s,%s,%s)",(user.id,user.name,user.email,user.password,user.profile))
+            db.cerrar_conexion()
+            return True
+        return False
+
+        
+    except Exception as e:
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f" ocurrio un error {e}")
+    
+def buscar_user(email):
+     db = Database('root','12345','biblioteca_python','3306')
 
      try:
-        query = """
-            INSERT INTO users (id,name,email,password,profile)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """
-        
-        values =(
-            datos.id,
-            datos.name,
-            datos.password,
-            datos.profile
-        )   
+        db.conectar_db()  
 
-        cursor.execute(query, values)
-        conexion.commit()       
+       
+        resultado = db.ejecutar_consulta("SELECT * FROM users WHERE email = %s", (email,))
+        
+        datos = [dato for dato in resultado]
+        db.cerrar_conexion()  
+
+        return datos
+      
      except Exception as e:
-        print(f"error:{e}")
-        raise HTTPException(status_code=500, detail=f"ERROR GUARDAR LOS DATOS EN LA DB: {e}")
-     finally:
-          cursor.close()
-          conexion.close()
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrió un error: {e}")
+    

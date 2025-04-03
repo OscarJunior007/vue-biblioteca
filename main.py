@@ -2,11 +2,12 @@ from fastapi import FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
 from entrypoints.libro_actions import setup_register_libros
+from entrypoints.user_action import setup_users
 
 
 app = FastAPI()
 setup_register_libros(app)
-
+setup_users(app)
 origins = [
     "http://localhost.tiangolo.com",
     "https://localhost.tiangolo.com",
