@@ -1,48 +1,141 @@
 <template>
-    <v-container>
-      <v-card class="pa-5">
+  <v-container>
+    <v-card class="pa-5">
+      <v-row>
+        <v-col cols="12" md="6">
+          <v-text-field
+            density="comfortable"
+            variant="outlined"
+            label="Buscar por titulo autor o categoria"
+            prepend-inner-icon="mdi-magnify"
+            hide-details
+          ></v-text-field>
+        </v-col>
+
+        <v-col cols="12" md="3">
+          <v-select
+            density="comfortable"
+            variant="outlined"
+            label="Categoria"
+            :items="['Novela', 'Historia', 'Ficcion']"
+            hide-details
+          ></v-select>
+        </v-col>
+
+        <v-col cols="12" md="3">
+          <v-select
+            density="comfortable"
+            variant="outlined"
+            label="Estados"
+            :items="['Disponibles', 'Prestados', 'Deshabilitados']"
+            hide-details
+          ></v-select>
+        </v-col>
+
+        <v-col v-if="profile_user == 1" class="d-flex justify-end " >
+          <v-btn color="green" @click="dialogLibro = true" variant="elevated"> agregar libro </v-btn>
+        </v-col>
+
+        
+        <v-col v-else class="d-flex justify-end " >
+          <v-btn style="display: none;" color="green" @click="dialogLibro = true" variant="elevated"> agregar libro </v-btn>
+        </v-col>
+      </v-row>
+    </v-card>
+  </v-container>
+
+  <v-container>
+  <v-dialog v-model="dialogLibro">
+    <v-card class="pa-5 mx-auto" max-width="600">
+      <v-card-title class="text-h5">Registro de Libro</v-card-title>
+
+      <v-form @submit.prevent="submitForm">
         <v-row>
-          <v-col cols="12" md="6">
+          <v-col cols="12">
             <v-text-field
-              density="comfortable"
-              variant="outlined"
-              label="Buscar por titulo autor o categoria"
-              prepend-inner-icon="mdi-magnify"
-              hide-details
+              prepend-inner-icon="mdi-book"
+              v-model="form_create_libro.titulo"
+              label="Título del Libro"
+              required
             ></v-text-field>
           </v-col>
-  
-          <v-col cols="12" md="3">
+
+          <v-col cols="12">
+            <v-text-field
+              prepend-inner-icon="mdi-book-account"
+              v-model="form_create_libro.author"
+              label="Autor"
+              required
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12">
             <v-select
-              density="comfortable"
-              variant="outlined"
-              label="Categoria"
-              :items="['Novela', 'Historia', 'Ficcion']"
-              hide-details
+              v-model="form_create_libro.categoria"
+              :items="categorias"
+              label="Categoría"
+              required
             ></v-select>
           </v-col>
-  
-          <v-col cols="12" md="3">
-            <v-select
-              density="comfortable"
-              variant="outlined"
-              label="Estados"
-              :items="['Disponibles', 'Prestados', 'Deshabilitados']"
-              hide-details
-            ></v-select>
+
+          <v-col cols="12">
+            <v-text-field
+              v-model="form_create_libro.fecha_publicacion"
+              label="Fecha de Publicación"
+              type="date"
+              required
+            ></v-text-field>
           </v-col>
+
+          <v-col  cols="12" class="text-center">
+            <v-btn type="submit" color="primary">Registrar Libro</v-btn>
+          </v-col>
+
+      
+
+          
         </v-row>
-      </v-card>
-    </v-container>
-  </template>
-  
+      </v-form>
+    </v-card>
+  </v-dialog>
+</v-container>
+</template>
 
 <script>
+import { reactive,ref } from 'vue'
+
 export default {
-    name:'BusquedaComponent'
-}
+  name: "BusquedaComponent",
+
+  props: {
+    dialogLibro: Boolean,
+    categorias: Array,
+    profile_user:Number
+  },
+
+  emits: ['response'], // Declara los eventos que emites
+
+  setup(props, { emit }) {
+    const dialogLibro =ref(false) 
+    const form_create_libro = reactive({
+      titulo: "",
+      author: "",
+      categoria: "",
+      estado: "disponible",
+      fecha_publicacion: "",
+    })
+
+    const submitForm = () => {
+      emit('response', form_create_libro)
+    }
+
+    return {
+      form_create_libro,
+      submitForm,
+      dialogLibro
+    }
+  }
+};
 </script>
-
 <style>
-
 </style>

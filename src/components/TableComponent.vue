@@ -1,5 +1,8 @@
 <template>
   <v-container>
+    <div v-if="profile_user == 2 && libros.length == 0">
+      <H1 class="text-center">Aun no tienes libros prestados</H1>
+    </div>
     <v-card class="pa-5">
       <v-table class="mt-4">
         <thead>
@@ -14,9 +17,20 @@
         <tbody>
           <tr v-for="libro in libros" :key="libro.id">
             <td>{{ libro.titulo }}</td>
-            <td>{{ libro.autor }}</td>
+            <td>{{ libro.author }}</td>
             <td>{{ libro.categoria }}</td>
-            <td>{{ libro.estado }}</td>
+            
+            <td v-if="libro.estado = 'disponible' ">
+             <v-chip color="green" variant="tonal">
+              {{ libro.estado }}
+             </v-chip> 
+            </td>
+
+            <td v-else-if="libro.estado = 'prestado' ">
+             <v-chip color="blue" variant="tonal">
+              {{ libro.estado }}
+             </v-chip> 
+            </td>
 
             <td class="d-flex justify-start">
               <v-btn variant="text" icon color="blue" density="compact"
@@ -43,7 +57,20 @@ export default {
   name: "TableComponent",
   props: {
     libros: Array,
+    profile_user: Number,
   },
+
+  setup(){
+    const form_edit_libro = reactive({
+      titulo: "",
+      author: "",
+      categoria: "",
+      estado: "disponible",
+      fecha_publicacion: "",
+    })
+
+    return{form_edit_libro}
+  }
 };
 </script>
 

@@ -1,11 +1,13 @@
 <template>
   <v-container>
     <div></div>
-    <MenuComponent :profile="profile_user" ></MenuComponent>
-    <BusquedaComponent></BusquedaComponent>
-    <TableComponent :libros="libros"></TableComponent>
+    <MenuComponent ></MenuComponent>
+    <BusquedaComponent :profile_user="profile_user" @response="handleResponse"></BusquedaComponent>
+    <TableComponent :profile_user="profile_user" :libros="libros"></TableComponent>
     <AppFooter></AppFooter>
   </v-container>
+
+  
 </template>
 
 <script>
@@ -14,7 +16,8 @@ import BusquedaComponent from "@/components/BusquedaComponent.vue";
 
 import MenuComponent from "@/components/MenuComponent.vue";
 import TableComponent from "@/components/TableComponent.vue";
-import {onMounted} from 'vue';
+import { onMounted, ref,reactive,toRaw } from "vue";
+import axios from "axios";
 
 export default {
   name: "HomeView",
@@ -26,48 +29,45 @@ export default {
   },
 
   setup() {
-    const profile_user = localStorage.getItem("profile_user")
-    const libros = [
-      {
-        id: 1,
-        titulo: "El Principito",
-        autor: "Antoine de Saint-Exupéry",
-        categoria: "Ficción",
-        estado: "Disponible",
-      },
-      {
-        id: 2,
-        titulo: "Cien años de soledad",
-        autor: "Gabriel García Márquez",
-        categoria: "Realismo mágico",
-        estado: "Prestado",
-      },
-      {
-        id: 3,
-        titulo: "1984",
-        autor: "George Orwell",
-        categoria: "Distopía",
-        estado: "Disponible",
-      },
-      {
-        id: 4,
-        titulo: "Don Quijote de la Mancha",
-        autor: "Miguel de Cervantes",
-        categoria: "Clásico",
-        estado: "Disponible",
-      },
-      {
-        id: 5,
-        titulo: "Los miserables",
-        autor: "Victor Hugo",
-        categoria: "Drama",
-        estado: "Prestado",
-      },
-    ];
+    let childMsg = ref('')
+    const profile_user = localStorage.getItem("profile_user");
+    const libros = ref([])
+    const dialogLibro = ref(true);
+    const BASE_URL = "http://127.0.0.1:8000";
+    const handleResponse = async (libroData) => {
+      try{
+        const response = await axios.post(`${BASE_URL}/api/register-libro`,
+        toRaw(libroData),
+        { headers: { "Content-Type": "application/json" } })
+        console.log("CODIGO DE ESTAOD: ",response.status)
+        if(response.status==200) libros.value.unshift(response.data.libro); 
+        console.log("Libro guardado con exito", response.data);  
+        
+      }catch(error){
+        console.error("Error al crear el libro:", error);
+      }
+    }
+
+    const getLibros = async()=>{
+      try{
+           const response =  await axios.get(`${BASE_URL}/api/listar-libros`)
+           if(response.status !=200){
+            console.log("No se pudo extraer ningun libro")
+            return;
+           }
+           console.log(response.data)
+           libros.value = response.data.libro;  
+      }catch (error){
+        console.error("Error al crear el libro:", error);
+      }
+    }
+    
     onMounted(() => {
       console.log(profile_user)
+      if(profile_user ==1) getLibros()
+ 
     });
-    return { libros,profile_user };
+    return { libros, profile_user, dialogLibro,childMsg,handleResponse,getLibros };
   },
 };
 </script>
