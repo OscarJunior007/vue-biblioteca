@@ -72,7 +72,8 @@
           <v-col cols="12">
             <v-select
               v-model="form_create_libro.categoria"
-              :items="categorias"
+              :items="['Novela', 'Historia', 'Ficcion']"
+
               label="Categoría"
               required
             ></v-select>

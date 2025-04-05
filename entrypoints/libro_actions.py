@@ -34,3 +34,13 @@ def setup_register_libros(app: FastAPI):
             return {"message":"Estado del libro actualizado con exito","libro":libros_recibidos}
         except Exception as e:
             raise HTTPException(status.HTTP_400_BAD_REQUEST,detail=f"No se pudo extraer los libros :{e}")
+        
+    @app.put("/api/edit-libro")
+    def deshabilitar_libro(libro:Libro):
+        try:
+            libros_recibidos =  libro_repo.edit_libro(libro)
+            if not libros_recibidos:
+                return {"message":"No se pudo encontrar ese libro"}
+            return {"message":"Estado del libro actualizado con exito","libro":libro.dict()}
+        except Exception as e:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST,detail=f"No se pudo extraer los libros :{e}")
