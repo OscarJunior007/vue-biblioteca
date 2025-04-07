@@ -36,7 +36,7 @@
 
 <script>
 import { ref, reactive, toRaw } from "vue";
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 import axios from "axios";
 export default {
   name: "LoginView",
@@ -56,16 +56,15 @@ export default {
           toRaw(forDataLogin),
           { headers: { "Content-Type": "application/json" } }
         );
-        
-        localStorage.setItem("id_user",response.data.user[0].id)
-        localStorage.setItem("profile_user",response.data.user[0].profile)
-        router.push("/home");
 
+        localStorage.setItem("id_user", response.data.user[0].id);
+        localStorage.setItem("profile_user", response.data.user[0].profile);
+        router.push("/home");
       } catch (error) {
         console.error("Error al crear usuario:", error);
       }
     };
-    return { forDataLogin,login_user };
+    return { forDataLogin, login_user };
   },
 };
 </script>

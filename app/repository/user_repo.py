@@ -6,7 +6,7 @@ from fastapi import HTTPException,status
 def create_user(user:User):
 
 
-    db = Database('root','12345','biblioteca_python','3306')
+    db = Database('root','12345','biblioteca_python','3307','127.0.0.1')
     
     try:
         
@@ -23,7 +23,7 @@ def create_user(user:User):
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f" ocurrio un error {e}")
     
 def buscar_user(email):
-     db = Database('root','12345','biblioteca_python','3306')
+     db = Database('root','12345','biblioteca_python','3307','127.0.0.1')
 
      try:
         db.conectar_db()  

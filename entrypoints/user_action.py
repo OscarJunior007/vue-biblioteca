@@ -3,7 +3,7 @@ from app.models.schemas import Libro,User
 from app.repository import user_repo
 def setup_users(app: FastAPI):
     @app.post("/api/register-user")
-    def register_libro(user:User):
+    def register_user(user:User):
         try:
            verificar_user = user_repo.buscar_user(user.email)
            if  verificar_user:
@@ -16,7 +16,7 @@ def setup_users(app: FastAPI):
             raise HTTPException(status.HTTP_400_BAD_REQUEST,detail=f"No se pudo ingresar el libro :{e}")
     
     @app.post("/api/login/{email}")
-    def register_libro(email):
+    def login_user(email):
         try:
            verificar_user = user_repo.buscar_user(email)
 

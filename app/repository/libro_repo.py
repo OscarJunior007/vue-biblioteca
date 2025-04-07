@@ -6,7 +6,8 @@ from fastapi import HTTPException,status
 def create_libro(libro:Libro):
 
 
-    db = Database('root','12345','biblioteca_python','3306')
+    db = Database('root','12345','biblioteca_python','3307','127.0.0.1')
+
     
     try:
         
@@ -24,7 +25,8 @@ def create_libro(libro:Libro):
     
 
 def estado_libro(estado,id):
-    db = Database('root','12345','biblioteca_python','3306')
+    db = Database('root','12345','biblioteca_python','3307','127.0.0.1')
+
     
     try:
         
@@ -41,7 +43,8 @@ def estado_libro(estado,id):
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f" ocurrio un error {e}")
     
 def listar_libros():
-    db = Database('root','12345','biblioteca_python','3306')
+    db = Database('root','12345','biblioteca_python','3307','127.0.0.1')
+
     
     try:
         

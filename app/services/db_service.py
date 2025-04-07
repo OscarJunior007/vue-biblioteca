@@ -2,11 +2,12 @@ import mysql.connector
 from fastapi import HTTPException,status
 
 class Database:
-    def __init__(self,user, password, database, port):
+    def __init__(self,user, password, database, port,host):
         self.user = user
         self.password = password
         self.database = database
         self.port = port
+        self.host = host
         self.connection = None
         self.cursor = None
 

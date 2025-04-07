@@ -71,22 +71,20 @@ export default {
       password: "",
     });
     const BASE_URL = "http://127.0.0.1:8000";
-    
 
     const crear_user = async () => {
       try {
-            const response = await axios.post(
-            `${BASE_URL}/api/register-user`,
-            toRaw(formData), // Convierte el objeto reactivo a uno plano
-            { headers: { "Content-Type": "application/json" } }
-            );
+        const response = await axios.post(
+          `${BASE_URL}/api/register-user`,
+          toRaw(formData), // Convierte el objeto reactivo a uno plano
+          { headers: { "Content-Type": "application/json" } }
+        );
         console.log("Usuario creado:", response.data);
-
       } catch (error) {
         console.error("Error al crear usuario:", error);
       }
     };
-    return { formData, BASE_URL, crear_user,limpiar_data };
+    return { formData, BASE_URL, crear_user };
   },
 };
 </script>
