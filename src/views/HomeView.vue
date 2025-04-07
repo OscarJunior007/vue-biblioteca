@@ -1,13 +1,18 @@
 <template>
   <v-container>
     <div></div>
-    <MenuComponent ></MenuComponent>
-    <BusquedaComponent :profile_user="profile_user" @response="handleResponse"></BusquedaComponent>
-    <TableComponent :profile_user="profile_user" :libros="libros"></TableComponent>
+    <MenuComponent></MenuComponent>
+    <BusquedaComponent
+      :profile_user="profile_user"
+      @response="handleResponse"
+    ></BusquedaComponent>
+    <TableComponent
+      :profile_user="profile_user"
+      :libros="libros"
+      @editResponse="editLibro"
+    ></TableComponent>
     <AppFooter></AppFooter>
   </v-container>
-
-  
 </template>
 
 <script>
@@ -16,8 +21,9 @@ import BusquedaComponent from "@/components/BusquedaComponent.vue";
 
 import MenuComponent from "@/components/MenuComponent.vue";
 import TableComponent from "@/components/TableComponent.vue";
-import { onMounted, ref,reactive,toRaw } from "vue";
+import { onMounted, ref, reactive, toRaw } from "vue";
 import axios from "axios";
+import { VConfirmEdit } from "vuetify/components";
 
 export default {
   name: "HomeView",
@@ -29,45 +35,80 @@ export default {
   },
 
   setup() {
-    let childMsg = ref('')
+    let childMsg = ref("");
     const profile_user = localStorage.getItem("profile_user");
-    const libros = ref([])
+    const libros = ref([]);
     const dialogLibro = ref(true);
     const BASE_URL = "http://127.0.0.1:8000";
-    const handleResponse = async (libroData) => {
-      try{
-        const response = await axios.post(`${BASE_URL}/api/register-libro`,
-        toRaw(libroData),
-        { headers: { "Content-Type": "application/json" } })
-        console.log("CODIGO DE ESTAOD: ",response.status)
-        if(response.status==200) libros.value.unshift(response.data.libro); 
-        console.log("Libro guardado con exito", response.data);  
-        
-      }catch(error){
-        console.error("Error al crear el libro:", error);
-      }
-    }
 
-    const getLibros = async()=>{
-      try{
-           const response =  await axios.get(`${BASE_URL}/api/listar-libros`)
-           if(response.status !=200){
-            console.log("No se pudo extraer ningun libro")
-            return;
-           }
-           console.log(response.data)
-           libros.value = response.data.libro;  
-      }catch (error){
+    const handleResponse = async (libroData) => {
+      try {
+        const response = await axios.post(
+          `${BASE_URL}/api/register-libro`,
+          toRaw(libroData),
+          { headers: { "Content-Type": "application/json" } }
+        );
+        console.log("CODIGO DE ESTAOD: ", response.status);
+        if (response.status == 200) libros.value.unshift(response.data.libro);
+        console.log("Libro guardado con exito", response.data);
+      } catch (error) {
         console.error("Error al crear el libro:", error);
       }
-    }
-    
+    };
+
+    const editLibro = async (libroData) => {
+      try {
+        const response = await axios.put(
+          `${BASE_URL}/api/edit-libro`,
+          toRaw(libroData),
+          { headers: { "Content-Type": "application/json" } }
+        );
+        console.log("CODIGO DE ESTAOD: ", response.status);
+        if (response.status === 200) {
+          const updatedLibro = response.data.libro;
+
+          
+          const index = libros.value.findIndex(
+            (libro) => libro.id === updatedLibro.id
+          );
+
+          if (index !== -1) {
+        
+            libros.value[index] = updatedLibro;
+          }
+        }
+        console.log("Libro editado con exito", response.data);
+      } catch (error) {
+        console.error("Error al editar el libro:", error);
+      }
+    };
+    const getLibros = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/listar-libros`);
+        if (response.status != 200) {
+          console.log("No se pudo extraer ningun libro");
+          return;
+        }
+        console.log(response.data);
+        libros.value = response.data.libro;
+      } catch (error) {
+        console.error("Error al crear el libro:", error);
+      }
+    };
+
     onMounted(() => {
-      console.log(profile_user)
-      if(profile_user ==1) getLibros()
- 
+      console.log(profile_user);
+      if (profile_user == 1) getLibros();
     });
-    return { libros, profile_user, dialogLibro,childMsg,handleResponse,getLibros };
+    return {
+      libros,
+      profile_user,
+      dialogLibro,
+      childMsg,
+      handleResponse,
+      getLibros,
+      editLibro,
+    };
   },
 };
 </script>
