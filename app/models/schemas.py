@@ -1,18 +1,33 @@
 from pydantic import BaseModel,Field
 from uuid import uuid4
-
+from datetime import date
+from typing import Optional
 class Libro(BaseModel):
-    id:str = Field(default_factory=lambda:str(uuid4()))
-    titulo:str
+    titulo: str
+    author: str  
+    estado:str = Field(default="Disponible")
     categoria:str
-    author:str
-    fecha_publicacion:str
-    estado:str | None = "disponible"
+    fecha_publicacion:date 
 
 
 class User(BaseModel):
-    id:str = Field(default_factory=lambda:str(uuid4()))
-    name:str
+    name: str 
+    numero_documento:str
     email:str
-    password:str
-    profile:int | None = 2
+    password:str    
+    profile: str 
+    
+class Prestamo(BaseModel):
+    usuario_id: str
+    libro_id : str  
+    fecha_prestamo: date =  date.today()
+    estado : str =   Field(default="Prestado")
+
+
+class LibroPrestadoOut(BaseModel):
+    nombre_libro:str
+    fecha_prestamo:date
+    fecha_devolucion:Optional[date] = Field(default=None)
+    fecha_publicacion:date
+    
+    

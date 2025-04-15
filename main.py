@@ -1,13 +1,15 @@
-from fastapi import FastAPI
-
+from fastapi import FastAPI,APIRouter
+from entrypoints import libro_actions
 from fastapi.middleware.cors import CORSMiddleware
-from entrypoints.libro_actions import setup_register_libros
-from entrypoints.user_action import setup_users
 
 
-app = FastAPI()
-setup_register_libros(app)
-setup_users(app)
+def include_router(app):
+    app.include_router(libro_actions.router)  
+  
+
+    
+    
+
 origins = [
     "http://localhost.tiangolo.com",
     "https://localhost.tiangolo.com",
@@ -16,14 +18,27 @@ origins = [
     "http://127.0.0.1:8000",
     "http://localhost:3000",
 ]
-
-app.add_middleware(
+     
+def start_application():
+    app =  FastAPI()
+    
+    app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+    include_router(app)
+    return app  
+
+
+
+
+app = start_application()
+
+
+
 
 import uvicorn
 

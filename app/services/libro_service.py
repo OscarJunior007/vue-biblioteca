@@ -1,35 +1,22 @@
 from app.models.schemas import Libro
+from sqlmodel import Session
+from app.repository.models import LibroModel
+from app.repository.models import PrestamoModel
+from app.models.schemas import LibroPrestadoOut
 
-class libroService:
+def libros_prestados_by_user(session:Session,id):
+    prestamos = session.query(PrestamoModel).filter(PrestamoModel.usuario_id == id).all()
 
-    def __init__(self):
-        self.lista_libros = []
-        self.db_user = {}
+    libros_prestados = []
 
-
-    def almacenar_libros(self,libro:Libro) -> bool:   
-        for i in self.lista_libros:
-            if i['id'] == libro.id:
-                print("Ese ID ya esta registrado")
-                return False
-        self.lista_libros.append(libro.__dict__)
-        return True
-    
-    def listar_libros(self):
-        return [libro for libro in self.lista_libros if libro["estado"].lower() != "deshabiltado"]
-     
-    
-    def deshabilitar_libro(self, id) -> bool:
-        filtro = list(filter(lambda x: x["id"] == id, self.lista_libros))
-        if not filtro:
-            return False
-        
-        libro = filtro[0]
-
-        if libro['estado'] == "deshabiltado":
-            return False
-
-        libro['estado'] = "deshabiltado"
-        return filtro
-
+    for prestamo in prestamos:
+        libro = session.query(LibroModel).filter(LibroModel.id == prestamo.libro_id).first()
+        if libro:
+            libros_prestados.append(LibroPrestadoOut(
+                nombre_libro=libro.titulo,
+                fecha_prestamo=prestamo.fecha_prestamo,
+                fecha_devolucion=prestamo.fecha_devolucion,
+                fecha_publicacion=libro.fecha_publicacion
+            ))
+    return libros_prestados 
 
