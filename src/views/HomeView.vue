@@ -10,6 +10,7 @@
       :profile_user="profile_user"
       :libros="libros"
       @editResponse="editLibro"
+      @prestamoResponse="prestamoLibro"
     ></TableComponent>
     <AppFooter></AppFooter>
   </v-container>
@@ -37,9 +38,10 @@ export default {
   setup() {
     let childMsg = ref("");
     const profile_user = localStorage.getItem("profile_user");
-    const libros = ref([]);
+    const libros = reactive([]);
     const dialogLibro = ref(true);
     const BASE_URL = "http://127.0.0.1:8000";
+    const id_user = ref("");
 
     const handleResponse = async (libroData) => {
       try {
@@ -48,8 +50,8 @@ export default {
           toRaw(libroData),
           { headers: { "Content-Type": "application/json" } }
         );
-        console.log("CODIGO DE ESTAOD: ", response.status);
-        if (response.status == 200) libros.value.unshift(response.data.libro);
+        console.log("CODIGO DE ESTAOD: ", response.data);
+        if (response.status == 200) libros.unshift(response.data.libro);
         console.log("Libro guardado con exito", response.data);
       } catch (error) {
         console.error("Error al crear el libro:", error);
@@ -63,23 +65,50 @@ export default {
           toRaw(libroData),
           { headers: { "Content-Type": "application/json" } }
         );
-        console.log("CODIGO DE ESTAOD: ", response.status);
-        if (response.status === 200) {
-          const updatedLibro = response.data.libro;
+        console.log(response.data.libros)
+        if (response.status === 200 && response.data.libros) {
+          const updatedLibro = response.data.libros;
 
-          
-          const index = libros.value.findIndex(
+          const index = libros.findIndex(
             (libro) => libro.id === updatedLibro.id
           );
 
           if (index !== -1) {
-        
-            libros.value[index] = updatedLibro;
+            libros[index] = updatedLibro;
           }
+
+          console.log(" Libro editado con éxito", updatedLibro);
+        } else {
+          console.warn(" El libro no fue actualizado: ", response.data);
         }
-        console.log("Libro editado con exito", response.data);
       } catch (error) {
-        console.error("Error al editar el libro:", error);
+        console.error(" Error al editar el libro:", error);
+      }
+    };
+
+    const prestamoLibro = async (libroData) => {
+      try {
+        const response = await axios.post(
+          `${BASE_URL}/api/prestar-libro`,
+          toRaw(libroData)
+        );
+        if (response.status != 200) {
+          console.log("NO SE PUDO PRESTAR NADA");
+          return;
+        }
+
+        const updatedLibro = response.data.libro;
+        const index = libros.findIndex(
+            (libro) => libro.id === updatedLibro.id_libro
+          );
+        if(index == -1){
+          return;
+        }
+        libros[index].estado = "Prestado";  
+
+        console.log("LIBRO PRESTADO ", response.data);
+      } catch (error) {
+        console.error("Error al prestar el libro:", error);
       }
     };
     const getLibros = async () => {
@@ -90,15 +119,39 @@ export default {
           return;
         }
         console.log(response.data);
-        libros.value = response.data.libro;
+        Object.assign(libros, response.data);
       } catch (error) {
         console.error("Error al crear el libro:", error);
       }
     };
 
+    const getLibroById = async (id) => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/api/listar-libros-by-id-users/${id}`
+        );
+
+        if (response.status != 200) {
+          console.log("No se pudo extraer ningun libro");
+          return;
+        }
+        console.log(response.data);
+        console.log("antes", libros);
+        Object.assign(libros, response.data.libros);
+        console.log("despues", libros);
+      } catch (error) {
+        console.error("Error al extraer el libro:", error);
+      }
+    };
+
     onMounted(() => {
       console.log(profile_user);
-      if (profile_user == 1) getLibros();
+      id_user.value = localStorage.getItem("id_user");
+      if (profile_user == "ADMIN") {
+        getLibros();
+      } else {
+        getLibroById(id_user.value);
+      }
     });
     return {
       libros,
@@ -108,6 +161,9 @@ export default {
       handleResponse,
       getLibros,
       editLibro,
+      getLibroById,
+      id_user,
+      prestamoLibro,
     };
   },
 };

@@ -13,7 +13,7 @@ def libros_prestados_by_user(session:Session,id):
         libro = session.query(LibroModel).filter(LibroModel.id == prestamo.libro_id).first()
         if libro:
             libros_prestados.append(LibroPrestadoOut(
-                nombre_libro=libro.titulo,
+                titulo=libro.titulo,
                 fecha_prestamo=prestamo.fecha_prestamo,
                 fecha_devolucion=prestamo.fecha_devolucion,
                 fecha_publicacion=libro.fecha_publicacion

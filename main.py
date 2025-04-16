@@ -1,10 +1,11 @@
 from fastapi import FastAPI,APIRouter
-from entrypoints import libro_actions
+from entrypoints import libro_actions,user_action
 from fastapi.middleware.cors import CORSMiddleware
 
 
 def include_router(app):
     app.include_router(libro_actions.router)  
+    app.include_router(user_action.router)  
   
 
     

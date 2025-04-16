@@ -52,13 +52,19 @@ export default {
     const login_user = async () => {
       try {
         const response = await axios.post(
-          `${BASE_URL}/api/login/${forDataLogin.email}`,
+          `${BASE_URL}/api/login`,
           toRaw(forDataLogin),
           { headers: { "Content-Type": "application/json" } }
         );
+        if(response.status !=200){
+          console.log("no se pudo tener nada")
+          return;
+        }
+    
+        localStorage.setItem("id_user",response.data.id)
+        localStorage.setItem("doc_user",response.data.documento_user)
+        localStorage.setItem("profile_user",response.data.profile)
 
-        localStorage.setItem("id_user", response.data.user[0].id);
-        localStorage.setItem("profile_user", response.data.user[0].profile);
         router.push("/home");
       } catch (error) {
         console.error("Error al crear usuario:", error);

@@ -32,7 +32,7 @@
           ></v-select>
         </v-col>
 
-        <v-col v-if="profile_user == 1" class="d-flex justify-end " >
+        <v-col v-if="profile_user == 'ADMIN'" class="d-flex justify-end " >
           <v-btn color="green" @click="dialogLibro = true" variant="elevated"> agregar libro </v-btn>
         </v-col>
 
@@ -122,7 +122,7 @@ export default {
       titulo: "",
       author: "",
       categoria: "",
-      estado: "disponible",
+      estado: "Disponible",
       fecha_publicacion: "",
     })
 
