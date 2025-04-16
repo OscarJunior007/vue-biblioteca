@@ -90,11 +90,7 @@
 
           <v-col  cols="12" class="text-center">
             <v-btn type="submit" color="primary">Registrar Libro</v-btn>
-          </v-col>
-
-      
-
-          
+          </v-col>    
         </v-row>
       </v-form>
     </v-card>
