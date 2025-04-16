@@ -72,18 +72,9 @@ def prester_libro(data:Prestamo):
     except Exception as e:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,detail=f"Error interno en el servido {e}")
    
-# @router.put("/api/edit-estado-libro/{id}/{estado}")
-# def deshabilitar_libro(id,estado):
-#     try:
-#         libros_recibidos =  libro_repo.estado_libro(id,estado)
-#         if not libros_recibidos:
-#             return {"message":"No se pudo encontrar ese libro"}
-#         return {"message":"Estado del libro actualizado con exito","libro":libros_recibidos}
-#     except Exception as e:
-#         raise HTTPException(status.HTTP_400_BAD_REQUEST,detail=f"No se pudo extraer los libros :{e}")
     
 @router.put("/api/edit-libro")
-def deshabilitar_libro(libro:editLibro):
+def editar_libro(libro:editLibro):
     try:
         with get_session() as session: 
             
@@ -100,3 +91,7 @@ def deshabilitar_libro(libro:editLibro):
                 
     except Exception as e:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,detail=f"No se pudo extraer los libros :{e}")
+    
+@router.put("/api/deshabilitar-libro")
+def deshabilitar_libro(id:str):
+    pass

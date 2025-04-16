@@ -18,20 +18,9 @@ def get_session():
 
 
 
-def inserta_user():
-    with get_session() as session:
-        user = UsuarioModel(name="Oscar Mejia",numero_documento="1082856284",email="oscar@gmail.com",password="12345",profile="ADMIN")
-        user2 = UsuarioModel(name="Diego",numero_documento="1082856285",email="diego@gmail.com",password="12345",profile="DEFAULT")
-        
-        session.add(user)  
-        session.add(user2)  
-        session.commit()
-    print("Usuario creado con éxito")    
-    return
-
 def create_table():
     SQLModel.metadata.create_all(engine)
     
 if __name__ == '__main__':
     create_table()
-    inserta_user()
+   
