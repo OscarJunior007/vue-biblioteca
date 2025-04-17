@@ -60,7 +60,7 @@ export default {
           console.log("no se pudo tener nada")
           return;
         }
-    
+        
         localStorage.setItem("id_user",response.data.id)
         localStorage.setItem("doc_user",response.data.documento_user)
         localStorage.setItem("profile_user",response.data.profile)

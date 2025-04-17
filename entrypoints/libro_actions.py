@@ -91,7 +91,35 @@ def editar_libro(libro:editLibro):
                 
     except Exception as e:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,detail=f"No se pudo extraer los libros :{e}")
+
+
+@router.get("/api/libro/{estado}",response_model=List[LibroModel])
+def obtener_libros_by_estado(estado: str):
+    try:    
+        with get_session() as session:
+            libros = session.query(LibroModel).filter(LibroModel.estado == estado).all()
+            if not libros:
+                return JSONResponse(status_code=status.HTTP_404_NOT_FOUND,content={"Message":"No se encontro libros con ese estado"})  
+            return JSONResponse(status_code=status.HTTP_200_OK, content={"libros":jsonable_encoder(libros)})
+    except Exception as e:
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,detail=f"No se pudo extraer los libros :{e}")
     
-@router.put("/api/deshabilitar-libro")
+@router.put("/api/libro/disabled/{id}")
 def deshabilitar_libro(id:str):
-    pass
+    try:
+        with get_session() as session:
+            libro = session.query(LibroModel).filter(LibroModel.id == id).first()
+            if not libro:
+                return JSONResponse(status_code=status.HTTP_404_NOT_FOUND,content={"Message":"No se encontro el libro con ese id"})
+            if libro.estado.lower() != "disponible":
+                return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"Message":"No puedes deshabilitar este libro su estado no es disponible"})  
+                
+            libro.estado = "Deshabilitado"  
+            session.commit()
+            return JSONResponse(status_code=status.HTTP_404_NOT_FOUND,content={"Libro":jsonable_encoder(libro)})
+               
+            
+    except Exception as e:
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,detail=f"No se pudo deshabilitar el libro {e}")
+            
+            

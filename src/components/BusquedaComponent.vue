@@ -25,15 +25,18 @@
         <v-col cols="12" md="3">
           <v-select
             density="comfortable"
+            v-model ="filtroEstado"
+            @update:model-value="filterEstados"
             variant="outlined"
             label="Estados"
-            :items="['Disponibles', 'Prestados', 'Deshabilitados']"
+            :items="['Disponible', 'Prestado', 'Deshabilitado']"
             hide-details
           ></v-select>
         </v-col>
 
         <v-col v-if="profile_user == 'ADMIN'" class="d-flex justify-end " >
-          <v-btn color="green" @click="dialogLibro = true" variant="elevated"> agregar libro </v-btn>
+          <v-btn color="yellow" @click="refrezh()" variant="elevated"> eliminar filtros </v-btn>
+          <v-btn color="green" @click="dialogLibro = true" variant="elevated" class="ml-2"> agregar libro </v-btn>
         </v-col>
 
         
@@ -100,6 +103,7 @@
 
 <script>
 import { reactive,ref } from 'vue'
+import { useRouter } from 'vue-router';
 
 export default {
   name: "BusquedaComponent",
@@ -110,10 +114,12 @@ export default {
     profile_user:Number
   },
 
-  emits: ['response'], // Declara los eventos que emites
+  emits: ['response','filterEstado'], 
 
   setup(props, { emit }) {
+    const router = useRouter()
     const dialogLibro =ref(false) 
+    const filtroEstado =  ref("")
     const form_create_libro = reactive({
       titulo: "",
       author: "",
@@ -121,15 +127,23 @@ export default {
       estado: "Disponible",
       fecha_publicacion: "",
     })
-
+    const refrezh = () =>{
+        window.location.reload();
+    }
     const submitForm = () => {
       emit('response', form_create_libro)
     }
 
+    const filterEstados = () =>{
+      emit('filterEstado',filtroEstado.value)
+    }
     return {
       form_create_libro,
       submitForm,
-      dialogLibro
+      dialogLibro,
+      filtroEstado,
+      filterEstados,
+      refrezh
     }
   }
 };

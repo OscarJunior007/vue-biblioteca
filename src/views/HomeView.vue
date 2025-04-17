@@ -1,16 +1,20 @@
 <template>
   <v-container>
     <div></div>
-    <MenuComponent></MenuComponent>
+
+    <MenuComponent ></MenuComponent>
     <BusquedaComponent
+      v-if="profile_user == 'ADMIN'"
       :profile_user="profile_user"
       @response="handleResponse"
+      @filterEstado="filtroByEstado"
     ></BusquedaComponent>
     <TableComponent
       :profile_user="profile_user"
       :libros="libros"
       @editResponse="editLibro"
       @prestamoResponse="prestamoLibro"
+      @disabledResponse="deshabilitarLibro"
     ></TableComponent>
     <AppFooter></AppFooter>
   </v-container>
@@ -24,7 +28,6 @@ import MenuComponent from "@/components/MenuComponent.vue";
 import TableComponent from "@/components/TableComponent.vue";
 import { onMounted, ref, reactive, toRaw } from "vue";
 import axios from "axios";
-import { VConfirmEdit } from "vuetify/components";
 
 export default {
   name: "HomeView",
@@ -38,11 +41,39 @@ export default {
   setup() {
     let childMsg = ref("");
     const profile_user = localStorage.getItem("profile_user");
-    const libros = reactive([]);
+    let libros = reactive([]);
     const dialogLibro = ref(true);
     const BASE_URL = "http://127.0.0.1:8000";
     const id_user = ref("");
 
+
+
+    const filtroByEstado = async (estado) => {  
+      const response = await axios.get(`${BASE_URL}/api/libro/${estado}`);  
+      console.log("estado recibido",estado)
+      if(response.status != 200){
+        console.log("Error");
+        return
+      }
+      // console.log(response.data.libros)
+
+      libros.splice(0,libros.length, ...response.data.libros)
+
+      console.log("array de libros actual",libros)
+    }
+
+    const deshabilitarLibro = async(id) =>{
+      try{
+        console.log("Id recibido: ",id)
+        const response =  await axios.put(`${BASE_URL}/api/libro/disabled/${id}`)
+        if(response.status !=200){
+          console.log("No se pudo deshabilitar nada")
+        }
+        console.log(response.status)
+      }catch(error){
+        throw new  Error("ocurrio un error: ",error)
+      }
+    }
     const handleResponse = async (libroData) => {
       try {
         const response = await axios.post(
@@ -164,6 +195,8 @@ export default {
       getLibroById,
       id_user,
       prestamoLibro,
+      filtroByEstado,
+      deshabilitarLibro
     };
   },
 };

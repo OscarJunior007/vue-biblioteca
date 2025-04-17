@@ -46,12 +46,14 @@
 
             <td v-if="profile_user == 'ADMIN'">
               <v-chip
-                :color="libro.estado === 'Disponible' ? 'green' : 'blue'"
+                :color="libro.estado === 'Disponible' ? 'green' : libro.estado === 'Deshabilitado' ? 'red':'blue'"
                 variant="tonal"
               >
                 {{ libro.estado }}
               </v-chip>
             </td>
+
+            
 
             <td v-if="profile_user == 'ADMIN'" class="d-flex justify-start">
               <v-btn
@@ -63,10 +65,10 @@
               >
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
-              <v-btn @click="PrestarLibro(libro)" variant="text" icon color="green" density="compact">
+              <v-btn  @click="PrestarLibro(libro)" variant="text" icon :color="libro.estado === 'Deshabilitado' ? 'red' : libro.estado === 'Prestado' ? 'red' : 'green' " :disabled="libro.estado == 'Deshabilitado' || libro.estado == 'Prestado' " density="compact"> 
                 <v-icon>mdi-exit-to-app</v-icon>
               </v-btn>
-              <v-btn variant="text" icon color="red" density="compact">
+              <v-btn @click="disabled(libro.id)" :disabled="libro.estado == 'Deshabilitado' || libro.estado == 'Prestado'" variant="text" icon color="red" density="compact">
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
             </td>
@@ -166,7 +168,7 @@ export default {
     profile_user: Number,
   },
 
-  emits: ["editResponse","prestamoResponse"], // Declara los eventos que emites
+  emits: ["editResponse","prestamoResponse","DisabledResponse"], // Declara los eventos que emites
 
   setup(props, { emit }) {
     const dialogEdit = ref(false);
@@ -192,6 +194,10 @@ export default {
     const submitFormPrestamo = () => {
       emit("prestamoResponse", form_prestamo_libro);
     };
+
+    const disabled = (id) => {  
+      emit("DisabledResponse", id); 
+    }
     const editarLibro = (libro) => {
       Object.assign(form_edit_libro, libro);
       dialogEdit.value = true;
@@ -202,7 +208,7 @@ export default {
       dialogPrestamo.value = true;
     };
 
-    return { form_edit_libro, dialogEdit, editarLibro, submitFormEdit,dialogPrestamo,form_prestamo_libro,submitFormPrestamo,PrestarLibro};
+    return { form_edit_libro, dialogEdit, editarLibro, submitFormEdit,dialogPrestamo,form_prestamo_libro,submitFormPrestamo,PrestarLibro,disabled};
   },
 };
 </script>
