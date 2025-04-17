@@ -121,5 +121,32 @@ def deshabilitar_libro(id:str):
             
     except Exception as e:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,detail=f"No se pudo deshabilitar el libro {e}")
+    
+@router.put("/api/libro/devolver/{id}")
+def devolver_libro(id:str): 
+    try:    
+        with get_session() as session:
+             libro_prestado = session.query(PrestamoModel).filter(PrestamoModel.libro_id == id).first()
+             libro = session.query(LibroModel).filter(LibroModel.id == id).first()
+             
+             if not libro_prestado:
+                return JSONResponse(status_code=status.HTTP_404_NOT_FOUND,content={"Message":"No se encontro el libro con ese id"})
+            
+             if libro_prestado.estado != "Prestado":
+                return JSONResponse(status_code=status.HTTP_200_OK,content={"Message":"El estado del libro no es Prestado"})
+            
+             libro_prestado.estado = "Devuelto" 
+             libro_prestado.fecha_devolucion = date.today()
+             libro.estado ="Disponible"
+             session.commit()
+             return JSONResponse(status_code=status.HTTP_200_OK,content={"Message":"Libro devuelto"})
+             
+    except Exception as e:
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,detail=f"No se pudo devolver el libro {e}")
+            
+                
+
+            
+               
             
             
