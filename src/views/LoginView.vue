@@ -28,6 +28,9 @@
           </v-text-field>
 
           <v-btn @click="login_user()"> ingresar </v-btn>
+          <router-link to="/register"
+            ><v-btn> Crear cuenta </v-btn></router-link
+          >
         </v-form>
       </v-card-text>
     </v-card>
@@ -56,14 +59,14 @@ export default {
           toRaw(forDataLogin),
           { headers: { "Content-Type": "application/json" } }
         );
-        if(response.status !=200){
-          console.log("no se pudo tener nada")
+        if (response.status != 200) {
+          console.log("no se pudo tener nada");
           return;
         }
-        
-        localStorage.setItem("id_user",response.data.id)
-        localStorage.setItem("doc_user",response.data.documento_user)
-        localStorage.setItem("profile_user",response.data.profile)
+
+        localStorage.setItem("id_user", response.data.id);
+        localStorage.setItem("doc_user", response.data.documento_user);
+        localStorage.setItem("profile_user", response.data.profile);
 
         router.push("/home");
       } catch (error) {

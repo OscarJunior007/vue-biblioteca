@@ -33,6 +33,7 @@ class Prestamo(BaseModel):
 
 
 class LibroPrestadoOut(BaseModel):
+    id:str
     titulo:str
     fecha_prestamo:date
     fecha_devolucion:Optional[date] = Field(default=None)

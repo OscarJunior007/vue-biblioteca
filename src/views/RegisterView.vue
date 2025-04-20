@@ -76,7 +76,7 @@ export default {
       try {
         const response = await axios.post(
           `${BASE_URL}/api/register-user`,
-          toRaw(formData), // Convierte el objeto reactivo a uno plano
+          toRaw(formData),
           { headers: { "Content-Type": "application/json" } }
         );
         console.log("Usuario creado:", response.data);

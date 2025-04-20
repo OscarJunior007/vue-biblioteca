@@ -12,6 +12,7 @@
             <th v-if="profile_user == 'DEFAULT'">Fecha Publicación</th>
             <th v-if="profile_user == 'DEFAULT'">Fecha Préstamo</th>
             <th v-if="profile_user == 'DEFAULT'">Fecha Devolución</th>
+            <th v-if="profile_user == 'DEFAULT'">Devolver libro</th>
 
             <th v-if="profile_user == 'ADMIN'">Autor</th>
             <th v-if="profile_user == 'ADMIN'">Categoría</th>
@@ -24,7 +25,6 @@
           <tr v-for="libro in libros" :key="libro.id">
             <td>{{ libro.titulo }}</td>
 
-     
             <td v-if="profile_user == 'DEFAULT'">
               {{ libro.fecha_publicacion }}
             </td>
@@ -37,23 +37,38 @@
               }}
             </td>
 
-    
             <td v-if="profile_user == 'ADMIN'">{{ libro.author }}</td>
             <td v-if="profile_user == 'ADMIN'">{{ libro.categoria }}</td>
             <td v-if="profile_user == 'ADMIN'">
               {{ libro.fecha_publicacion }}
             </td>
+            <td v-if="profile_user == 'DEFAULT'" class="d-flex justify-start">
+              <v-btn
+                @click="devolverLibro(libro.id)"
+                variant="text"
+                icon
+                color="blue"
+                density="compact"
+                :disabled="libro.fecha_devolucion != null"
+              >
+                <v-icon>mdi-book-arrow-left</v-icon>
+              </v-btn>
+            </td>
 
             <td v-if="profile_user == 'ADMIN'">
               <v-chip
-                :color="libro.estado === 'Disponible' ? 'green' : libro.estado === 'Deshabilitado' ? 'red':'blue'"
+                :color="
+                  libro.estado === 'Disponible'
+                    ? 'green'
+                    : libro.estado === 'Deshabilitado'
+                    ? 'red'
+                    : 'blue'
+                "
                 variant="tonal"
               >
                 {{ libro.estado }}
               </v-chip>
             </td>
-
-            
 
             <td v-if="profile_user == 'ADMIN'" class="d-flex justify-start">
               <v-btn
@@ -63,13 +78,48 @@
                 color="blue"
                 density="compact"
               >
-                <v-icon>mdi-pencil</v-icon>
+                <v-icon>mdi-book-edit</v-icon>
               </v-btn>
-              <v-btn  @click="PrestarLibro(libro)" variant="text" icon :color="libro.estado === 'Deshabilitado' ? 'red' : libro.estado === 'Prestado' ? 'red' : 'green' " :disabled="libro.estado == 'Deshabilitado' || libro.estado == 'Prestado' " density="compact"> 
-                <v-icon>mdi-exit-to-app</v-icon>
+              <v-btn
+                @click="PrestarLibro(libro)"
+                variant="text"
+                icon
+                :color="
+                  libro.estado === 'Deshabilitado'
+                    ? 'red'
+                    : libro.estado === 'Prestado'
+                    ? 'red'
+                    : 'green'
+                "
+                :disabled="
+                  libro.estado == 'Deshabilitado' || libro.estado == 'Prestado'
+                "
+                density="compact"
+              >
+                <v-icon>mdi-book-arrow-right</v-icon>
               </v-btn>
-              <v-btn @click="disabled(libro.id)" :disabled="libro.estado == 'Deshabilitado' || libro.estado == 'Prestado'" variant="text" icon color="red" density="compact">
-                <v-icon>mdi-delete</v-icon>
+              <v-btn
+                @click="disabled(libro.id)"
+                :disabled="
+                  libro.estado == 'Deshabilitado' || libro.estado == 'Prestado'
+                "
+                variant="text"
+                icon
+                color="red"
+                density="compact"
+              >
+                <v-icon>mdi-book-lock</v-icon>
+              </v-btn>
+              <v-btn
+                :disabled="
+                  libro.estado == 'Disponible' || libro.estado == 'Prestado'
+                "
+                variant="text"
+                icon
+                color="yellow"
+                density="compact"
+              >
+                <v-icon>mdi-book-lock-open</v-icon>
               </v-btn>
             </td>
           </tr>
@@ -77,7 +127,6 @@
       </v-table>
     </v-card>
 
-    <!-- Modal de edición -->
     <v-container>
       <v-dialog v-model="dialogEdit">
         <v-card class="pa-5 mx-auto" max-width="600">
@@ -153,7 +202,6 @@
         </v-card>
       </v-dialog>
     </v-container>
-
   </v-container>
 </template>
 
@@ -168,12 +216,17 @@ export default {
     profile_user: Number,
   },
 
-  emits: ["editResponse","prestamoResponse","DisabledResponse"], // Declara los eventos que emites
+  emits: [
+    "editResponse",
+    "prestamoResponse",
+    "DisabledResponse",
+    "devolverLibro",
+  ], // Declara los eventos que emites
 
   setup(props, { emit }) {
     const dialogEdit = ref(false);
     const dialogPrestamo = ref(false);
-
+    // const idLibro = ref("");
     const form_edit_libro = reactive({
       id: "",
       titulo: "",
@@ -184,8 +237,8 @@ export default {
     });
 
     const form_prestamo_libro = reactive({
-      id_libro: "" ,
-      doc_user:""
+      id_libro: "",
+      doc_user: "",
     });
 
     const submitFormEdit = () => {
@@ -194,10 +247,14 @@ export default {
     const submitFormPrestamo = () => {
       emit("prestamoResponse", form_prestamo_libro);
     };
+    const devolverLibro = (id) => {
+      emit("devolverLibro", id);
+    };
 
-    const disabled = (id) => {  
-      emit("DisabledResponse", id); 
-    }
+    const disabled = (id) => {
+      emit("DisabledResponse", id);
+    };
+
     const editarLibro = (libro) => {
       Object.assign(form_edit_libro, libro);
       dialogEdit.value = true;
@@ -208,7 +265,19 @@ export default {
       dialogPrestamo.value = true;
     };
 
-    return { form_edit_libro, dialogEdit, editarLibro, submitFormEdit,dialogPrestamo,form_prestamo_libro,submitFormPrestamo,PrestarLibro,disabled};
+    return {
+      form_edit_libro,
+      dialogEdit,
+      editarLibro,
+      submitFormEdit,
+      dialogPrestamo,
+      form_prestamo_libro,
+      submitFormPrestamo,
+      PrestarLibro,
+      devolverLibro,
+      disabled,
+      // idLibro,
+    };
   },
 };
 </script>

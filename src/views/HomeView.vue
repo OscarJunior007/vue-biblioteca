@@ -2,7 +2,7 @@
   <v-container>
     <div></div>
 
-    <MenuComponent ></MenuComponent>
+    <MenuComponent></MenuComponent>
     <BusquedaComponent
       v-if="profile_user == 'ADMIN'"
       :profile_user="profile_user"
@@ -15,6 +15,7 @@
       @editResponse="editLibro"
       @prestamoResponse="prestamoLibro"
       @disabledResponse="deshabilitarLibro"
+      @devolverLibro="regresarLibro"
     ></TableComponent>
     <AppFooter></AppFooter>
   </v-container>
@@ -46,34 +47,44 @@ export default {
     const BASE_URL = "http://127.0.0.1:8000";
     const id_user = ref("");
 
+    const regresarLibro = async (id) => {
+      const response = await axios.put(`${BASE_URL}/api/libro/devolver/${id}`);
+      console.log("id del libro", id);
+      if (response.status != 200) {
+        console.log("ERROR NO SE PUDO REGREAR EL LIBRO");
+        return;
+      }
 
-
-    const filtroByEstado = async (estado) => {  
-      const response = await axios.get(`${BASE_URL}/api/libro/${estado}`);  
-      console.log("estado recibido",estado)
-      if(response.status != 200){
+      console.log(response.data);
+    };
+    const filtroByEstado = async (estado) => {
+      const response = await axios.get(`${BASE_URL}/api/libro/${estado}`);
+      console.log("estado recibido", estado);
+      if (response.status != 200) {
         console.log("Error");
-        return
+        return;
       }
       // console.log(response.data.libros)
 
-      libros.splice(0,libros.length, ...response.data.libros)
+      libros.splice(0, libros.length, ...response.data.libros);
 
-      console.log("array de libros actual",libros)
-    }
+      console.log("array de libros actual", libros);
+    };
 
-    const deshabilitarLibro = async(id) =>{
-      try{
-        console.log("Id recibido: ",id)
-        const response =  await axios.put(`${BASE_URL}/api/libro/disabled/${id}`)
-        if(response.status !=200){
-          console.log("No se pudo deshabilitar nada")
+    const deshabilitarLibro = async (id) => {
+      try {
+        console.log("Id recibido: ", id);
+        const response = await axios.put(
+          `${BASE_URL}/api/libro/disabled/${id}`
+        );
+        if (response.status != 200) {
+          console.log("No se pudo deshabilitar nada");
         }
-        console.log(response.status)
-      }catch(error){
-        throw new  Error("ocurrio un error: ",error)
+        console.log(response.status);
+      } catch (error) {
+        throw new Error("ocurrio un error: ", error);
       }
-    }
+    };
     const handleResponse = async (libroData) => {
       try {
         const response = await axios.post(
@@ -96,7 +107,7 @@ export default {
           toRaw(libroData),
           { headers: { "Content-Type": "application/json" } }
         );
-        console.log(response.data.libros)
+        console.log(response.data.libros);
         if (response.status === 200 && response.data.libros) {
           const updatedLibro = response.data.libros;
 
@@ -130,12 +141,12 @@ export default {
 
         const updatedLibro = response.data.libro;
         const index = libros.findIndex(
-            (libro) => libro.id === updatedLibro.id_libro
-          );
-        if(index == -1){
+          (libro) => libro.id === updatedLibro.id_libro
+        );
+        if (index == -1) {
           return;
         }
-        libros[index].estado = "Prestado";  
+        libros[index].estado = "Prestado";
 
         console.log("LIBRO PRESTADO ", response.data);
       } catch (error) {
@@ -196,7 +207,8 @@ export default {
       id_user,
       prestamoLibro,
       filtroByEstado,
-      deshabilitarLibro
+      deshabilitarLibro,
+      regresarLibro,
     };
   },
 };
