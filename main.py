@@ -7,10 +7,6 @@ def include_router(app):
     app.include_router(libro_actions.router)  
     app.include_router(user_action.router)  
   
-
-    
-    
-
 origins = [
     "http://localhost.tiangolo.com",
     "https://localhost.tiangolo.com",
@@ -18,6 +14,8 @@ origins = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "http://localhost:3000",
+
+
 ]
      
 def start_application():
