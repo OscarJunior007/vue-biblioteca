@@ -1,6 +1,6 @@
 ## 🌐 Descripción General
 
-Este proyecto es un sistema de **gestión de biblioteca** desarrollado con **FastAPI** para el backend y **Vue.js** para el frontend. Permite registrar, consultar y gestionar información sobre libros, usuarios y préstamos, ofreciendo una interfaz moderna y una API REST bien estructurada.
+Este proyecto es un sistema de **gestión de biblioteca** desarrollado con **FastAPI** para el backend y **Vue.js** para el frontend. Permite registrar, consultar y gestionar información sobre libros, usuarios y préstamos, ofreciendo una interfaz moderna y una API REST bien estructurada (proyecto final de clases ingeneria software).
 
 ## 📊 Tecnologías Utilizadas
 
